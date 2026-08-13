@@ -16,6 +16,7 @@ import expo.modules.appmetrics.networkrequests.NetworkRequestFilter
 import expo.modules.appmetrics.networkrequests.NetworkRequestMonitor
 import expo.modules.appmetrics.networkrequests.NetworkRequestObserver
 import expo.modules.appmetrics.networkrequests.NetworkRequestPersistence
+import expo.modules.appmetrics.networkrequests.NetworkTracesConfiguration
 import expo.modules.appmetrics.logevents.Severity
 import expo.modules.appmetrics.logevents.sanitizeLogEventAttributes
 import expo.modules.appmetrics.logevents.validateDisplayName
@@ -69,8 +70,9 @@ class AppMetricsModule : Module(), UpdatesStateChangeListener {
   lateinit var mainSession: SessionSharedObject
 
   /**
-   * The span producer installed on the monitor in `OnCreate`, kept so `OnDestroy` can
-   * uninstall it when the module is torn down (a JS reload).
+   * The span producer installed on the monitor in `OnCreate`, kept so `setNetworkTracesConfig`
+   * can apply a new recording policy to the live instance and `OnDestroy` can uninstall it
+   * when the module is torn down (a JS reload).
    */
   private var networkRequestPersistence: NetworkRequestPersistence? = null
 
@@ -136,6 +138,27 @@ class AppMetricsModule : Module(), UpdatesStateChangeListener {
         GlobalAttributes.set(attributes)
       }
 
+      Function("setNetworkTracesConfig") { config: NetworkTracesConfigParam ->
+        val configuration = NetworkTracesConfiguration(
+          enabled = config.enabled,
+          hosts = config.filter?.hosts,
+          methods = config.filter?.methods
+        )
+        // Persisted here rather than on the queue, so the setting survives even if the process
+        // dies before the hop below runs. This is a synchronous write on the JS thread (sync
+        // `Function` bodies run inline), traded deliberately: `configure` runs once at startup,
+        // and an `apply()` that loses the value to a hard kill would record a launch's worth of
+        // requests the app asked not to record.
+        AppMetricsPreferences.setNetworkTracesConfiguration(context, configuration)
+        scope.launch {
+          // Applied on the same queue that installs the producer, so a configure racing startup
+          // either precedes the install (and is read from preferences there) or lands after it.
+          // `modulesQueue` is a single thread and these are submitted from the JS thread, so two
+          // rapid calls apply in call order without re-reading what was just written.
+          networkRequestPersistence?.setConfiguration(configuration)
+        }
+      }
+
       OnCreate {
         sessionManager = SessionManager(context)
 
@@ -167,6 +190,7 @@ class AppMetricsModule : Module(), UpdatesStateChangeListener {
           val persistence = NetworkRequestPersistence(
             database = MetricsDatabase.getDatabase(context),
             scope = scope,
+            initialConfiguration = AppMetricsPreferences.getNetworkTracesConfiguration(context),
             sessionId = mainSession.sessionId
           )
           networkRequestPersistence = persistence
@@ -389,4 +413,14 @@ class AppMetricsModule : Module(), UpdatesStateChangeListener {
 data class MetricAttributes(
   @Field val routeName: String? = null,
   @Field val params: Map<String, Any>? = null
+) : Record
+
+/**
+ * Payload of `setNetworkTracesConfig`: the normalized `networkTraces` setting pushed down by
+ * `Observe.configure`.
+ */
+@OptimizedRecord
+data class NetworkTracesConfigParam(
+  @Field val enabled: Boolean = true,
+  @Field val filter: NetworkRequestFilter? = null
 ) : Record

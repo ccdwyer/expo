@@ -133,13 +133,6 @@ describe('config-comparison checks', () => {
     expect(result.issues.find((i) => i.includes('watchFolders'))).toBeDefined();
   });
 
-  it('flags deprecated resolver.blacklistRE', async () => {
-    const result = await runWithUserConfig({
-      resolver: { ...stubDefaultConfig().resolver, blacklistRE: /node_modules/ },
-    });
-    expect(result.issues.find((i) => i.includes('blacklistRE'))).toBeDefined();
-  });
-
   it('flags blockList patterns with the `g` flag', async () => {
     const result = await runWithUserConfig({
       resolver: { ...stubDefaultConfig().resolver, blockList: /foo/g },

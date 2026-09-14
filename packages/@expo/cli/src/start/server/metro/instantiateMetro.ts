@@ -29,6 +29,9 @@ import { DevToolsPluginEndpoint } from '../DevToolsPluginManager';
 import { createCorsMiddleware } from '../middleware/CorsMiddleware';
 import { createJsInspectorMiddleware } from '../middleware/inspector/createJsInspectorMiddleware';
 import { prependMiddleware } from '../middleware/mutations';
+import { parseModelContextPolicy } from '../modelContext/ModelContextPolicy';
+import type { ModelContextRegistry } from '../modelContext/ModelContextRegistry';
+import { createModelContextWebsocketEndpoint } from '../modelContext/ModelContextWebsocketEndpoint';
 import { getPlatformBundlers } from '../platformBundlers';
 import { createDevToolsPluginWebsocketEndpoint } from './DevToolsPluginWebsocketEndpoint';
 import type { ExpoMetroConfig } from './ExpoMetroConfig';
@@ -364,10 +367,12 @@ export async function instantiateMetroAsync(
       skipSDKVersionRequirement: true,
     }).exp,
     devToolsPluginManager,
+    modelContextRegistry,
   }: {
     isExporting: boolean;
     exp?: ExpoConfig;
     devToolsPluginManager: DevToolsPluginManager;
+    modelContextRegistry?: ModelContextRegistry;
   }
 ): Promise<{
   metro: MetroServer;
@@ -432,6 +437,17 @@ export async function instantiateMetroAsync(
 
     const devtoolsWebsocketEndpoints = createDevToolsPluginWebsocketEndpoint();
     Object.assign(websocketEndpoints, devtoolsWebsocketEndpoints);
+
+    // Runtime tool registry for `modelContext` from `expo/devtools`. Apps register tools over this
+    // socket and the policy from `expo.extra.modelContext` decides which ones agents can see. Only
+    // mounted together with the MCP server, which is the only consumer.
+    if (modelContextRegistry && env.EXPO_UNSTABLE_MCP_SERVER) {
+      modelContextRegistry.configure({ policy: parseModelContextPolicy(exp), serverBaseUrl });
+      Object.assign(
+        websocketEndpoints,
+        createModelContextWebsocketEndpoint({ registry: modelContextRegistry, serverBaseUrl })
+      );
+    }
 
     // Register WebSocket endpoints contributed by DevTools plugins. A plugin's `serverEntryPoint`
     // exports a `webSocketHandlers` map (route -> connection handler); each becomes a `ws` server

@@ -1319,6 +1319,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
         isExporting: !!options.isExporting,
         exp,
         devToolsPluginManager: this.devToolsPluginManager,
+        modelContextRegistry: this.modelContextRegistry,
       });
 
     // Required for symbolication:

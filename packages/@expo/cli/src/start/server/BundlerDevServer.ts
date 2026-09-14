@@ -18,6 +18,7 @@ import { DevelopmentSession } from './DevelopmentSession';
 import type { CreateURLOptions } from './UrlCreator';
 import { UrlCreator } from './UrlCreator';
 import { debugEvent } from './events';
+import { ModelContextRegistry } from './modelContext/ModelContextRegistry';
 import type { PlatformBundlers } from './platformBundlers';
 
 declare module '2g' {
@@ -134,6 +135,7 @@ export abstract class BundlerDevServer {
 
   private notifier: FileNotifier | null = null;
   protected readonly devToolsPluginManager: DevToolsPluginManager;
+  protected readonly modelContextRegistry: ModelContextRegistry;
   public isDevClient: boolean;
 
   constructor(
@@ -148,12 +150,15 @@ export abstract class BundlerDevServer {
        * @default new DevToolsPluginManager(projectRoot)
        */
       devToolsPluginManager?: DevToolsPluginManager;
+      modelContextRegistry?: ModelContextRegistry;
       // TODO: Replace with custom scheme maybe...
       isDevClient?: boolean;
     }
   ) {
     this.devToolsPluginManager =
       options?.devToolsPluginManager ?? new DevToolsPluginManager(projectRoot);
+    this.modelContextRegistry =
+      options?.modelContextRegistry ?? new ModelContextRegistry(projectRoot);
     this.isDevClient = options?.isDevClient ?? false;
   }
 

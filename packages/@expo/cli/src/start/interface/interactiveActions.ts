@@ -17,6 +17,7 @@ import {
 import type { StartOptions } from './commandsTable';
 import { BLT, printHelp, printItem, printUsage } from './commandsTable';
 import { createDevToolsMenuItems } from './createDevToolsMenuItems';
+import { createModelContextMenuItem } from './createModelContextMenuItem';
 import { event } from './events';
 
 interface MoreToolMenuItem extends ExpoChoice<string> {
@@ -215,6 +216,7 @@ export class DevServerManagerActions {
       const menuItems = [
         ...defaultMenuItems,
         ...createDevToolsMenuItems(plugins, defaultServerUrl, metroServerOrigin),
+        ...createModelContextMenuItem(this.devServerManager.modelContextRegistry),
       ];
 
       const value = await selectAsync(chalk`Dev tools {dim (native only)}`, menuItems);

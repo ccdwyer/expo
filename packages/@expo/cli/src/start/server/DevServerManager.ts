@@ -13,6 +13,7 @@ import { resolveSchemeAsync } from '../resolveOptions';
 import type { BundlerDevServer, BundlerStartOptions } from './BundlerDevServer';
 import DevToolsPluginManager from './DevToolsPluginManager';
 import { debugEvent } from './events';
+import { ModelContextRegistry } from './modelContext/ModelContextRegistry';
 import { getPlatformBundlers } from './platformBundlers';
 
 export type MultiBundlerStartOptions = {
@@ -47,6 +48,7 @@ export class DevServerManager {
 
   private projectPrerequisites: ProjectPrerequisite<any, void>[] = [];
   public readonly devtoolsPluginManager: DevToolsPluginManager;
+  public readonly modelContextRegistry: ModelContextRegistry;
 
   private notifier: FileNotifier | null = null;
 
@@ -61,6 +63,7 @@ export class DevServerManager {
       this.notifier = this.watchBabelConfig();
     }
     this.devtoolsPluginManager = new DevToolsPluginManager(projectRoot);
+    this.modelContextRegistry = new ModelContextRegistry(projectRoot);
   }
 
   private watchBabelConfig() {
@@ -181,6 +184,7 @@ export class DevServerManager {
       const BundlerDevServerClass = await BUNDLERS[type]();
       const server = new BundlerDevServerClass(this.projectRoot, platformBundlers, {
         devToolsPluginManager: this.devtoolsPluginManager,
+        modelContextRegistry: this.modelContextRegistry,
         isDevClient: !!options?.devClient,
       });
       await server.startAsync(options ?? this.options);

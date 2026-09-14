@@ -6,6 +6,8 @@
 
 ### 🎉 New features
 
+- Add the `/_expo/model-context` dev server endpoint and the `app_list_tools` / `app_call_tool` MCP tools that expose tools the running app registers through `modelContext` from `expo/devtools`. Tools registered by packages are blocked unless `expo.extra.modelContext.allowedPackages` lists the package. ([#50116](https://github.com/expo/expo/pull/50116) by [@kudo](https://github.com/kudo))
+
 ### 🐛 Bug fixes
 
 ### 💡 Others

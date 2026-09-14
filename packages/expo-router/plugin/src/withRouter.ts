@@ -95,6 +95,11 @@ export type Props = {
   pageHeaders?: PageHeadersConfig[];
   /** Enable experimental server middleware support with a `+middleware.ts` file. Requires `web.output: 'server'` to be set in app config. */
   unstable_useServerMiddleware?: boolean;
+  /**
+   * (Deprecated) Enable experimental data loader support. Requires `web.output: 'static' | 'server'` to be set in app config.
+   * @deprecated
+   */
+  unstable_useServerDataLoaders?: boolean;
   /** Enable experimental server-side rendering. When enabled with `web.output: 'server'`, HTML is rendered at request time instead of being pre-rendered at build time. */
   unstable_useServerRendering?: boolean;
   /** Disable synchronous layout updates for native screens. */
@@ -106,6 +111,12 @@ export type Props = {
 const withRouter: ConfigPlugin<Props | void> = (config, _props) => {
   const props = _props || {};
   validate(schema, props);
+
+  if (props.unstable_useServerDataLoaders) {
+    console.warn(
+      'As of SDK 58, unstable_useServerDataLoaders is no longer required and will be removed in future releases'
+    );
+  }
 
   withExpoHeadIos(config);
   withGammaScreens(config);

@@ -6,7 +6,7 @@
 
 ### 🎉 New features
 
-- Add the `apiRoutes` config plugin option to support API routes with static rendering.
+- Add the `apiRoutes` config plugin option to support API routes with static rendering. ([#50148](https://github.com/expo/expo/pull/50148) by [@hassankhan](https://github.com/hassankhan))
 
 - Enable server rendering by default for `web.output: "server"` ([#50120](https://github.com/expo/expo/pull/50120) by [@hassankhan](https://github.com/hassankhan))
 - Add the stable `expo-router/native-tabs` entry point and deprecate `expo-router/unstable-native-tabs`. ([#50119](https://github.com/expo/expo/pull/50119) by [@Ubax](https://github.com/Ubax))

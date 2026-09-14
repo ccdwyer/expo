@@ -100,6 +100,11 @@ export type Props = {
    * @deprecated
    */
   unstable_useServerDataLoaders?: boolean;
+  /**
+   * (Deprecated) Enable experimental server-side rendering. When enabled with `web.output: 'server'`, HTML is rendered at request time instead of being pre-rendered at build time.
+   * @deprecated
+   */
+  unstable_useServerRendering?: boolean;
   /** Disable synchronous layout updates for native screens. */
   disableSynchronousScreensUpdates?: boolean;
   /** Rerender the app on color scheme changes. When enabled, the app tree will rerender when the system theme changes (light/dark mode). Defaults to `true`. */
@@ -113,6 +118,12 @@ const withRouter: ConfigPlugin<Props | void> = (config, _props) => {
   if (props.unstable_useServerDataLoaders) {
     console.warn(
       'As of SDK 58, unstable_useServerDataLoaders is no longer required and will be removed in future releases'
+    );
+  }
+
+  if (props.unstable_useServerRendering) {
+    console.warn(
+      'As of SDK 58, unstable_useServerRendering is no longer required and will be removed in future releases'
     );
   }
 

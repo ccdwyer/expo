@@ -69,7 +69,8 @@ export class MetroConfigCheck implements DoctorCheck {
     }
 
     if (userConfig.resolver) {
-      if (userConfig.resolver.blacklistRE != null) {
+      // Metro 0.87 removed `blacklistRE` from its config types and silently ignores it
+      if ((userConfig.resolver as { blacklistRE?: unknown }).blacklistRE != null) {
         issues.push(
           `- "resolver.blacklistRE" is deprecated. Replace it with "resolver.blockList" or remove it.`
         );

@@ -4,6 +4,8 @@
 
 ### 🛠 Breaking changes
 
+- Remove the `unstable_useServerDataLoaders` config plugin option and enable data loaders by default.
+
 ### 🎉 New features
 
 - Add the stable `expo-router/native-tabs` entry point and deprecate `expo-router/unstable-native-tabs`. ([#50119](https://github.com/expo/expo/pull/50119) by [@Ubax](https://github.com/Ubax))

@@ -93,7 +93,9 @@ export type Props = {
   headers?: Record<string, string | string[]>;
   /** A list of headers that are set on a specific path's response from the server. */
   pageHeaders?: PageHeadersConfig[];
-  /** Enable experimental server middleware support with a `+middleware.ts` file. Requires `web.output: 'server'` to be set in app config. */
+  /** Enable API routes with static or server output. Defaults to `true` for server output and `false` for static output. */
+  apiRoutes?: boolean;
+  /** Enable experimental server middleware support with a `+middleware.ts` file. Requires `web.output: 'server'` or `apiRoutes: true` with static output. */
   unstable_useServerMiddleware?: boolean;
   /**
    * (Deprecated) Enable experimental data loader support. Requires `web.output: 'static' | 'server'` to be set in app config.
@@ -124,6 +126,12 @@ const withRouter: ConfigPlugin<Props | void> = (config, _props) => {
   if (props.unstable_useServerRendering) {
     console.warn(
       'As of SDK 58, unstable_useServerRendering is no longer required and will be removed in future releases'
+    );
+  }
+
+  if (props.apiRoutes !== undefined && !['static', 'server'].includes(config.web?.output ?? '')) {
+    throw new Error(
+      'The `apiRoutes` option requires `web.output` to be set to `static` or `server`.'
     );
   }
 

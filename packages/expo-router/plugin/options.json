@@ -184,8 +184,12 @@
             }
           }
         },
+        "apiRoutes": {
+          "description": "Enable API routes with static or server output. Defaults to true for server output and false for static output.",
+          "type": "boolean"
+        },
         "unstable_useServerMiddleware": {
-          "description": "Enable experimental server middleware support with a `+middleware.ts` file. Requires `web.output: 'server'` to be set in app config.",
+          "description": "Enable experimental server middleware support with a `+middleware.ts` file. Requires `web.output: 'server'` or `apiRoutes: true` with static output.",
           "type": "boolean",
           "default": false
         },

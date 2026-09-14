@@ -126,9 +126,15 @@ If you are using the [default](/more/create-expo/#--template) template to create
       default: 'false',
     },
     {
+      name: 'apiRoutes',
+      description:
+        'Enable API routes with static or server output. Defaults to `true` for server output and `false` for static output.',
+      default: 'Depends on web.output',
+    },
+    {
       name: 'unstable_useServerMiddleware',
       description:
-        'Enable server middleware support with a `+middleware.ts` file. Requires `web.output: "server"` to be set in app config.',
+        'Enable server middleware support with a `+middleware.ts` file. Requires `web.output: "server"` or `apiRoutes: true` with static output.',
       default: 'false',
       experimental: true,
     },

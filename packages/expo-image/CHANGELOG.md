@@ -8,6 +8,8 @@
 
 ### 🐛 Bug fixes
 
+- [iOS][Android] Fixed several `svgVariables` cases: an SVG that is not encoded in UTF-8 was substituted into as NUL-interleaved text instead of being left to the parser, entity escapes were written into a CDATA-wrapped `<style>` body where the parser does not decode them, an uppercase `VAR()` reference was not matched, and a supplied value containing a `var()` of its own was left in the document for a renderer that cannot resolve it. ([#50155](https://github.com/expo/expo/pull/50155) by [@tsapeta](https://github.com/tsapeta))
+
 ### 💡 Others
 
 ## 58.0.1 — 2026-09-14

@@ -39,8 +39,7 @@ module.exports = {
     reactServerFunctions: process.env.E2E_SERVER_FUNCTIONS,
   },
   web: {
-    // Fixtures that exercise prerendering must explicitly select static output.
-    output: process.env.EXPO_USE_STATIC ?? 'server',
+    output: process.env.EXPO_USE_STATIC ?? 'static',
     bundler: 'metro',
     favicon: process.env.E2E_FAVICON || undefined,
   },

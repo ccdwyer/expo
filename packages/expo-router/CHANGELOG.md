@@ -4,6 +4,8 @@
 
 ### 🛠 Breaking changes
 
+- Remove the `unstable_useServerRendering` config plugin option. Server output now renders HTML at request time by default.
+
 ### 🎉 New features
 
 - Add the stable `expo-router/native-tabs` entry point and deprecate `expo-router/unstable-native-tabs`. ([#50119](https://github.com/expo/expo/pull/50119) by [@Ubax](https://github.com/Ubax))
